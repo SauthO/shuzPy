@@ -1,7 +1,7 @@
 import numpy as np
 import unittest
 import weakref
-from memory_profiler import profile
+#from memory_profiler import profile
 import contextlib
 
 class Variable:
@@ -148,8 +148,6 @@ class Neg(Function):
 def neg(x):
     return Neg()(x)
 
-Variable.__neg__ = neg    
-
 class Add(Function):
     
     def forward(self, x0, x1):
@@ -162,9 +160,6 @@ class Add(Function):
 def add(x0, x1):
     x1 = as_array(x1)
     return Add()(x0, x1)
-
-Variable.__add__ = add
-Variable.__radd__ = add
 
 class Sub(Function):
     
@@ -182,9 +177,6 @@ def rsub(x0, x1):
     x1 = as_array(x1)
     return Sub()(x1, x0)
 
-Variable.__sub__ = sub
-Variable.__rsub__ = rsub
-
 class Mul(Function):
 
     def forward(self, x0, x1):
@@ -200,8 +192,6 @@ def mul(x0, x1):
     x1 = as_array(x1)
     return Mul()(x0, x1)
 
-Variable.__mul__ = mul
-Variable.__rmul__ = mul
 
 class Div(Function):
     
@@ -221,10 +211,6 @@ def rdiv(x0, x1):
     x1 = as_array(x1)
     return Div()( x1, x0 ) 
 
-
-Variable.__truediv__ = div
-Variable.__rtruediv__ = rdiv
-
 class Pow(Function):
     
     def __init__(self, c):
@@ -241,42 +227,14 @@ class Pow(Function):
 def pow(x, c):
     return Pow(c)(x)
 
-Variable.__pow__ = pow
-
-class Square(Function):
-    
-    def forward(self, x):
-        return x**2
-    
-    def backward(self, gy):
-        x = self.inputs[0].data
-        return 2*x*gy
-    
-class Exp(Function):
-    def forward(self, x):
-        return np.exp(x)
-    
-    def backward(self, gy):
-        x = self.inputs[0].data
-        return np.exp(x)*gy
-
-def square(x):
-    return Square()(x)
-
-def exp(x):
-    return Exp()(x)
-
-a = Variable(np.array(2.0))
-b = Variable(np.array(3.0))
-c = Variable(np.array(4.0))
-
-y = 2*(-a)-2.0/c + b**2
-
-y.backward()
-
-print(y)
-print(a.grad)
-print(b.grad)
-print(c.grad)
-print(3.0/a)
-print(a/3.0)
+def setup_variable():
+    Variable.__add__ = add
+    Variable.__radd__ = add
+    Variable.__mul__ = mul
+    Variable.__rmul__ = mul
+    Variable.__neg__ = neg
+    Variable.__sub__ = sub
+    Variable.__rsub__ = rsub
+    Variable.__truediv__ = div
+    Variable.__rtruediv__ = rdiv
+    Variable.__pow__ = pow
