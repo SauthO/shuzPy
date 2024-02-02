@@ -1,4 +1,4 @@
-is_simple_core = True
+is_simple_core = False
 
 if is_simple_core:
     from shuzPy.core_simple import Variable
@@ -9,7 +9,6 @@ if is_simple_core:
     from shuzPy.core_simple import as_variable
     from shuzPy.core_simple import setup_variable
 
-"""
 else:
     from shuzPy.core import Variable
     from shuzPy.core import Function
@@ -18,6 +17,4 @@ else:
     from shuzPy.core import as_array
     from shuzPy.core import as_variable
     from shuzPy.core import setup_variable
-"""
-    
 setup_variable()
