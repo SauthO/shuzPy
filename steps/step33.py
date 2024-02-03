@@ -16,5 +16,6 @@ print(y.data)
 print(x.grad)
 
 gx = x.grad
+x.cleargrad()
 gx.backward()
 print(x.grad)
