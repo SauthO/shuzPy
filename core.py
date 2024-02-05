@@ -1,8 +1,13 @@
+if '__file__' in globals():
+    import os, sys
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
+
 import numpy as np
 import unittest
 import weakref
 #from memory_profiler import profile
 import contextlib
+import shuzPy
 
 class Variable:
     __array_priority__ = 200
@@ -43,7 +48,22 @@ class Variable:
     @property
     def dtype(self):
         return self.data.dtype
-                
+    
+    def reshape(self, *shape):
+        if len(shape) == 1 and isinstance(shape[0], (tuple, list)):
+            shape = shape[0]
+        return shuzPy.functions.reshape(self, shape)
+    
+    def transpose(self):
+        return shuzPy.functions.transpose(self)
+    
+    @property
+    def T(self):
+        return shuzPy.functions.transpose(self)
+    
+    def sum(self, axis=None, keepdims=False):
+        return shuzPy.functions.sum(self, axis, keepdims)
+
     def set_creator(self, func):
         self.creator = func
         self.generation = func.generation + 1
