@@ -162,13 +162,17 @@ class Function:
     def backward(self, gy):
         raise NotImplementedError()
 
+#------------------------------------------------
+# Four Arithmetic Operations/Operator Overloading
+#------------------------------------------------
 class Neg(Function):
     
     def forward(self, x):
         return -x
     
     def backward(self, gy):
-        return -gy
+        gx = -gy
+        return gx
     
 def neg(x):
     return Neg()(x)
@@ -176,10 +180,15 @@ def neg(x):
 class Add(Function):
     
     def forward(self, x0, x1):
+        self.x0_shape, self.x1_shape = x0.shape, x1.shape
         return x0 + x1
     
     def backward(self, gy):
-        return gy, gy
+        gx0, gx1 = gy, gy
+        if self.x0_shape != self.x1_shape:
+            gx0 = shuzPy.functions.sum_to(gx0, self.x0_shape)
+            gx1 = shuzPy.functions.sum_to(gx1, self.x1_shape)
+        return gx0, gx1
     
 def add(x0, x1):
     x1 = as_array(x1)
@@ -188,10 +197,15 @@ def add(x0, x1):
 class Sub(Function):
     
     def forward(self, x0, x1):
+        self.x0_shape, self.x1_shape = x0.shape, x1.shape
         return x0 - x1
     
     def backward(self, gy):
-        return gy, -gy
+        gx0, gx1 = gy, -gy
+        if self.x0_shape != self.x1_shape:
+            gx0 = shuzPy.functions.sum_to(gx0, self.x0_shape)
+            gx1 = shuzPy.functions.sum_to(gx1, self.x1_shape)
+        return gx0, gx1
 
 def sub(x0, x1):
     x1 = as_array(x1)
@@ -208,7 +222,12 @@ class Mul(Function):
     
     def backward(self, gy):
         x0, x1 = self.inputs
-        return x1 * gy, x0 * gy
+        gx0 = x1 * gy
+        gx1 = x0 * gy
+        if x0.shape != x1.shape:
+            gx0 = shuzPy.functions.sum_to(gx0, x0.shape)
+            gx1 = shuzPy.functions.sum_to(gx1, x1.shape)
+        return gx0, gx1
 
 def mul(x0, x1):
     x1 = as_array(x1)
@@ -222,7 +241,12 @@ class Div(Function):
     
     def backward(self, gy):
         x0, x1 = self.inputs
-        return gy / x1 , ( -x0 / x1 ** 2 ) * gy
+        gx0 = gy / x1
+        gx1 = ( -x0 / x1 ** 2 ) * gy
+        if x0.shape != x1.shape:
+            gx0 = shuzPy.functions.sum_to(gx0, x0.shape)
+            gx1 = shuzPy.functions.sum_to(gx1, x1.shape)
+        return gx0, gx1
 
 def div(x0, x1):
     x1 = as_array(x1)
@@ -255,7 +279,8 @@ class Pow(Function):
         """
 
         c = self.c
-        return c * x ** (c-1) * gy
+        gx = c * x ** (c-1) * gy
+        return gx
 
 def pow(x, c):
     return Pow(c)(x)
