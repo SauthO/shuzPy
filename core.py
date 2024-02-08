@@ -137,6 +137,9 @@ def as_variable(obj):
         return obj
     return Variable(obj)
 
+class Parameter(Variable):
+    pass
+
 class Function:
     def __call__(self, *inputs):
         inputs = [as_variable(input) for input in inputs]
@@ -296,3 +299,5 @@ def setup_variable():
     Variable.__truediv__ = div
     Variable.__rtruediv__ = rdiv
     Variable.__pow__ = pow
+
+

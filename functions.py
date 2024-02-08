@@ -238,3 +238,4 @@ class Sigmoid(Function):
 
 def sigmoid(x):
     return Sigmoid()(x)
+

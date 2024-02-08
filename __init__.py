@@ -17,4 +17,8 @@ else:
     from shuzPy.core import as_array
     from shuzPy.core import as_variable
     from shuzPy.core import setup_variable
+    from shuzPy.core import Parameter
+    from shuzPy.layers import Layer
+    from shuzPy.models import Model
+
 setup_variable()
