@@ -299,5 +299,11 @@ def setup_variable():
     Variable.__truediv__ = div
     Variable.__rtruediv__ = rdiv
     Variable.__pow__ = pow
+    Variable.__getitem__ = shuzPy.functions.get_item
+
+    Variable.matmul = shuzPy.functions.matmul
+    Variable.dot = shuzPy.functions.matmul
+    Variable.max = shuzPy.functions.max
+    Variable.min = shuzPy.functions.min
 
 
