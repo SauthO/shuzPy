@@ -350,7 +350,7 @@ def min(x, axis=None, keepdims=False):
 
 
 class Clip(Function):
-    def __init__(self, x_min, x_ bbbbbbbbbbbbbbbbbbbbbbbbfxcdcxddxddxmax):
+    def __init__(self, x_min, x_max):
         self.x_min = x_min
         self.x_max = x_max
 
