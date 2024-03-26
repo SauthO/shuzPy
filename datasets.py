@@ -14,12 +14,13 @@ from shuzPy.transforms import Compose, Flatten, ToFloat, Normalize
 class Dataset:
     def __init__(self, train=True, transform=None, target_transform=None):
         self.train = train
-        self.transform = transform
-        self.target_transform = target_transform
+        # 前処理の機能
+        self.transform = transform # 一つの入力データに対する前処理
+        self.target_transform = target_transform # 一つのラベルに対する前処理
         if self.transform is None:
-            self.transform = lambda x: x
+            self.transform = lambda x: x #引数をそのまま返す前処理
         if self.target_transform is None:
-            self.target_transform = lambda x: x
+            self.target_transform = lambda x: x #引数をそのまま返す前処理
 
         self.data = None
         self.label = None
@@ -28,14 +29,15 @@ class Dataset:
     def __getitem__(self, index):
         assert np.isscalar(index)
         if self.label is None:
-            return self.transform(self.data[index]), None
+            return self.transform(self.data[index]), None #教師なし学習
         else:
             return self.transform(self.data[index]),\
-                   self.target_transform(self.label[index])
+                   self.target_transform(self.label[index]) #教師あり学習
 
     def __len__(self):
         return len(self.data)
-
+    
+    # データ準備
     def prepare(self):
         pass
 

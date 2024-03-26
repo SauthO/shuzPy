@@ -20,5 +20,6 @@ else:
     from shuzPy.core import Parameter
     from shuzPy.layers import Layer
     from shuzPy.models import Model
+    from shuzPy.dataloaders import DataLoader
 
 setup_variable()

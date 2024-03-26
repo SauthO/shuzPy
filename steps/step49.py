@@ -71,4 +71,4 @@ for epoch in range(max_epoch):
         sum_loss += float(loss.data) * len(batch_t)
 
     avg_loss = sum_loss / data_size
-    #print(f"epoch {epoch+1}, loss {avg_loss:.2f}")
+    print(f"epoch {epoch+1}, loss {avg_loss:.2f}")

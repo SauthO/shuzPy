@@ -24,7 +24,7 @@ class MLP(Model):
             setattr(self, "l"+str(i), layer)
             self.layers.append(layer)
         
-    def forward(self, x):
+    def forward(self, x): 
         for l in self.layers[:-1]:# 一番最後のlayerの一つ前まで
             x = self.activation(l(x))
         return self.layers[-1](x)

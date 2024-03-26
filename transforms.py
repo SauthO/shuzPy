@@ -28,7 +28,7 @@ class Compose:
 
 
 # =============================================================================
-# Transforms for PIL Image
+# Transforms for PIL(Python Image Library) Image
 # =============================================================================
 class Convert:
     def __init__(self, mode='RGB'):

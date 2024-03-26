@@ -6,7 +6,12 @@ import numpy as np
 from shuzPy.core import Function
 from shuzPy.core import as_variable
 from shuzPy import utils
+from shuzPy import Variable
+from shuzPy import as_array
 
+# =============================================================================
+# exp / log 
+# =============================================================================
 class Exp(Function):
 
     def forward(self, x):
@@ -34,6 +39,10 @@ class Log(Function):
     
 def log(x):
     return Log()(x)
+
+# =============================================================================
+# sin / cos / tanh
+# =============================================================================
 
 class Sin(Function):
 
@@ -77,6 +86,10 @@ class Tanh(Function):
 def tanh(x):
     return Tanh()(x)
 
+# =============================================================================
+# reshape / transpose
+# =============================================================================
+
 class Reshape(Function):
     
     def __init__(self, shape):
@@ -106,6 +119,10 @@ class Transpose(Function):
 
 def transpose(x):
     return Transpose()(x)
+
+# =============================================================================
+# sum / broadcast_to / sum_to
+# =============================================================================
 
 class Sum(Function):
 
@@ -160,7 +177,6 @@ def sum_to(x, shape):
     if x.shape == shape:
         return as_variable(x)
     return SumTo(shape)(x)
-
 
 class MatMul(Function):
     
@@ -367,3 +383,14 @@ class Clip(Function):
 
 def clip(x, x_min, x_max):
     return Clip(x_min, x_max)(x)
+
+# =============================================================================
+# accuracy
+# =============================================================================
+def accuracy(y, t):
+    y, t = as_variable(y), as_variable(t)
+
+    pred = y.data.argmax(axis=1).reshape(t.shape)
+    result = (pred == t.data)
+    acc = result.mean()
+    return Variable(as_array(acc))
