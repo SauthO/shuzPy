@@ -218,6 +218,9 @@ def linear_simple(x, W, b=None):
     t.data = None
     return y
 
+# =============================================================================
+# linear / sigmoid / relu
+# =============================================================================
 class Linear(Function):
 
     def forward(self, x, W, b):
@@ -255,6 +258,71 @@ class Sigmoid(Function):
 def sigmoid(x):
     return Sigmoid()(x)
 
+class ReLU(Function):
+    
+    def forward(self, x):
+        y = np.maximum(x, 0.0)
+        return y
+
+    def backward(self, gy):
+        x, = self.inputs
+        mask = x.data > 0
+        gx = gy * mask
+        return gx
+
+def relu(x):
+    return ReLU()(x) 
+
+# =============================================================================
+# softmax_simple / softmax_cross_entropy_simple / softmax
+# =============================================================================
+
+def softmax_simple(x, axis=1):
+    x = as_variable(x)
+    y = exp(x)
+    sum_y = sum(y, axis=axis, keepdims=True)
+    return y / sum_y
+
+def softmax_cross_entropy_simple(x,t):
+    x, t = as_variable(x), as_variable(t)
+    N = x.shape[0]
+
+    p = softmax_simple(x)
+    p = clip(p, 1e-15, 1.0)
+    log_p = log(p)
+    #print(log_p.shape)
+    #print(log_p)
+    tlog_p = log_p[np.arange(N), t.data]
+    #print(tlog_p)
+    y = -1 * sum(tlog_p) / N
+    return y
+
+
+class Softmax(Function):
+    
+    def __init__(self, axis=1):
+        self.axis = axis
+    
+    def forward(self, x):
+        y = x - x.max(axis=self.axis, keepdims=True)
+        y = np.exp(y)
+        y /= y.sum(axis=self.axis, keepdims=True)
+        return y
+    
+    def backward(self, gy):
+        y = self.outputs[0]()
+        gx = y * gy
+        sumdx = gx.sum(axis=self.axis, keepdims=True)
+        gx -= y * sumdx
+        return gx
+
+def softmax(x, axis=1):
+    return Softmax(axis)(x)
+
+# =============================================================================
+# get_item / GetItemGrad
+# =============================================================================
+
 class GetItem(Function):
 
     def __init__(self, slices):
@@ -286,44 +354,7 @@ class GetItemGrad(Function):
     def backward(self, ggx):
         return get_item(ggx, self.slices)
 
-def softmax_simple(x, axis=1):
-    x = as_variable(x)
-    y = exp(x)
-    sum_y = sum(y, axis=axis, keepdims=True)
-    return y / sum_y
 
-def softmax_cross_entropy_simple(x,t):
-    x, t = as_variable(x), as_variable(t)
-    N = x.shape[0]
-
-    p = softmax_simple(x)
-    p = clip(p, 1e-15, 1.0)
-    log_p = log(p)
-    tlog_p = log_p[np.arange(N), t.data]
-    y = -1 * sum(tlog_p) / N
-    return y
-
-
-class Softmax(Function):
-    
-    def __init__(self, axis=1):
-        self.axis = axis
-    
-    def forward(self, x):
-        y = x - x.max(axis=self.axis, keepdims=True)
-        y = np.exp(y)
-        y /= y.sum(axis=self.axis, keepdims=True)
-        return y
-    
-    def backward(self, gy):
-        y = self.outputs[0]()
-        gx = y * gy
-        sumdx = gx.sum(axis=self.axis, keepdims=True)
-        gx -= y * sumdx
-        return gx
-
-def softmax(x, axis=1):
-    return Softmax(axis)(x)
 
 
 # =============================================================================

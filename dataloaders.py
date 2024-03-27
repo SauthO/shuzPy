@@ -26,8 +26,9 @@ class DataLoader:
         return self
     
     def __next__(self):
+        #for x, t in loaderのイテレーションを回すたびにこの__next__が呼ばれる
         if self.iteration >= self.max_iter:
-            self.reset()
+            self.reset() # このリセットでepochごとにindexがシャッフルされる。
             raise StopIteration
         
         i, batch_size = self.iteration, self.batch_size
